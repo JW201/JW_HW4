@@ -5,7 +5,7 @@ on:
     branches: [ "prod" ]
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/sayhi
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/jw_hw4
   OUTPUT_DIR: "/opt/assignment_outputs"
 
 jobs:
@@ -26,6 +26,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      # Non-blocking lint/type (allowed by assignment)
       - name: Lint with pylint (non-blocking)
         run: pylint app.py || true
         continue-on-error: true
@@ -52,7 +53,7 @@ jobs:
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-      - name: Deploy to server via SSH and run container
+      - name: Deploy on server (pull & run)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DO_HOST }}
@@ -68,3 +69,4 @@ jobs:
               -v ${{ env.OUTPUT_DIR }}:/app/data \
               ${{ env.IMAGE_NAME }}:latest
             docker image prune -f
+
