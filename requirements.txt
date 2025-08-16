@@ -1,0 +1,5 @@
+fastapi[standard]
+uvicorn
+pytest
+pylint
+mypy
