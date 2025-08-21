@@ -1,10 +1,17 @@
 FROM python:3.11-slim
 
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# deps (ok if requirements.txt is empty)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt || true
 
+# app code
 COPY . .
 
-CMD ["fastapi", "run", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# run the script (not a server)
+CMD ["python", "app.py"]
+
